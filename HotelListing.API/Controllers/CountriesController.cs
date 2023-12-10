@@ -4,11 +4,13 @@ using HotelListing.API.Data;
 using HotelListing.API.Models.Country;
 using AutoMapper;
 using HotelListing.API.Contracts;
+using Microsoft.AspNetCore.Authorization;
 
 namespace HotelListing.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    //[Authorize]
     public class CountriesController : ControllerBase
     {
         //private readonly HotelListingDBContext _context;
@@ -23,6 +25,7 @@ namespace HotelListing.API.Controllers
 
         // GET: api/Countries
         [HttpGet]
+        [Authorize(Roles ="User")]
         public async Task<ActionResult<IEnumerable<GetCountryDetails>>> GetCountries()
         {
             List<Country> countries = await _countryRepository1.GetAllAsync();
@@ -32,6 +35,7 @@ namespace HotelListing.API.Controllers
 
         // GET: api/Countries/5
         [HttpGet("{id}")]
+        [Authorize(Roles ="User")]
         public async Task<ActionResult<CountryDetails>> GetCountry(int id)
         {
           
@@ -50,6 +54,7 @@ namespace HotelListing.API.Controllers
         // PUT: api/Countries/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
+        [Authorize(Roles ="Administrator")]
         public async Task<IActionResult> PutCountry(int id, UpdateCountry updateCountry)
         {
             if (id != updateCountry.Id)
@@ -86,6 +91,7 @@ namespace HotelListing.API.Controllers
         // POST: api/Countries
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
+        [Authorize(Roles = "Administrator")]
         public async Task<ActionResult<Country>> PostCountry(AddCountry addCountry)
         {
            Country country=_mapper.Map<Country>(addCountry);
@@ -101,6 +107,7 @@ namespace HotelListing.API.Controllers
 
         // DELETE: api/Countries/5
         [HttpDelete("{id}")]
+        [Authorize(Roles = "Administrator")]
         public async Task<IActionResult> DeleteCountry(int id)
         {
 
@@ -111,11 +118,12 @@ namespace HotelListing.API.Controllers
 
             return NoContent();
         }
-
+        [Authorize(Roles ="User")]
         private async Task<bool> CountryExists(int id)
         {
            return await _countryRepository1.Exists(id);
             
         }
+
     }
 }
